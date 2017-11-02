@@ -65,17 +65,11 @@ class MainActivity : AppCompatActivity() {
 
     //permissão para o imei
     fun checkPermissions(): Boolean {
-        try {
             return if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 false
             } else
                 true
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
     }
 
 
