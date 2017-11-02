@@ -14,6 +14,9 @@ import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 import android.widget.Toast
+import br.com.shefa.mapeamentoprodutores.Permissoes.PermissionUtils
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,20 +32,18 @@ class MainActivity : AppCompatActivity() {
         val banco = DB_Interno(this)//chama o banco
         conexao = TestarConexao().verificaConexao(this)
 
-        //PERMISSÃO PARA PEGAR O IMEI
-        if (checkPermissions()) {
-            numeroImei = imei()
-
-        } else {
-            setPermissions()
-        }
+        // Solicita as permissÃµes
+        val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
+        PermissionUtils.validate(this, 0, *permissoes)
 
         //click botao baixar linhas
         btn_baixar_linhas.setOnClickListener{
             if (conexao) {
-                ToastManager.show(this@MainActivity, "click botao baixar", ToastManager.INFORMATION)
                 banco.deletar()//deleta todos os registros
+                numeroImei = imei()
                 importaLinhas(numeroImei)
+
+                imei.setText(numeroImei)//textview
 
             }else{
                 ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
@@ -57,44 +58,37 @@ class MainActivity : AppCompatActivity() {
 
     }//fim do oncreate
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        for (result in grantResults) {
+            if (result == PackageManager.PERMISSION_DENIED) {
+                // Alguma permissÃ£o foi negada, agora Ã© com vocÃª :-)
+                alertAndFinish()
+                return
+            }
+        }
+    }
+
+    private fun alertAndFinish() {
+        run {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.app_name).setMessage("Para utilizar este aplicativo, voce precisa aceitar as permissoes.")
+            // Add the buttons
+            builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id -> finish() })
+            val dialog = builder.create()
+            dialog.show()
+        }
+    }
+
     //funçao importar linhas
     private fun importaLinhas(imei: String) {
 
-
-    }
-
-    //permissão para o imei
-    fun checkPermissions(): Boolean {
-            return if (ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                false
-            } else
-                true
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode != MY_PERMISSIONS_REQUEST_CODE) {
-            return
-        }
-        var isGranted = true
-        for (result in grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                isGranted = false
-                break
-            }
-        }
-        if (isGranted) {
-            imei()
-        } else {
-            Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show()
-        }
-    }
-    fun setPermissions() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), MY_PERMISSIONS_REQUEST_CODE)
-    }
 
-    //permissoes para IMEI
+    //pegar  IMEI
     @SuppressLint("MissingPermission")
     fun imei():String{
         telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
@@ -102,7 +96,6 @@ class MainActivity : AppCompatActivity() {
         return  deviceId
     }
 
-    //fim da permissão imei*******************************************************************************
 
 
 
