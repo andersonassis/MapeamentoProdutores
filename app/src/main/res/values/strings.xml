@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Mapeamento Produtores</string>
+    <string name="btn_baixar_linhas">BAIXAR LINHAS</string>
+    <string name="btn_exibir_linhas">EXIBIR LINHAS</string>
+
+</resources>
