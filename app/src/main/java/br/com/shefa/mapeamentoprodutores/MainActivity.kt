@@ -6,14 +6,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.telephony.TelephonyManager
 import br.com.shefa.mapeamentoprodutores.BD_Interno.DB_Interno
 import br.com.shefa.mapeamentoprodutores.Conexao.TestarConexao
 import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_main.*
-
-import android.widget.Toast
 import br.com.shefa.mapeamentoprodutores.Permissoes.PermissionUtils
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
@@ -22,7 +19,6 @@ import android.support.v7.app.AlertDialog
 class MainActivity : AppCompatActivity() {
     var conexao:Boolean = false
     var numeroImei:String = ""
-    private val MY_PERMISSIONS_REQUEST_CODE = 1
     var telephonyManager: TelephonyManager? = null
 
 
@@ -58,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     }//fim do oncreate
 
+    //subscrve o metodo para as permissoes
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -70,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //entra aqui se o usuario não conceder alguma permissão
     private fun alertAndFinish() {
         run {
             val builder = AlertDialog.Builder(this)
@@ -81,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //funçao importar linhas
+    //funçao importar as linhas
     private fun importaLinhas(imei: String) {
 
     }
