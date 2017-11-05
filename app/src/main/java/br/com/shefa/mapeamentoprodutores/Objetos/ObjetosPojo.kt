@@ -20,6 +20,7 @@ class ObjetosPojo {
     var longitude:String? = null  // longitude
     var obs:String? = null        //obs
     var datahora:String? = null    // data e hora da coleta
+    var salvou:String? = null
 
 
 
@@ -27,7 +28,7 @@ class ObjetosPojo {
     }
 
     constructor(id: Int, rota: String, dataColeta:String, subRota:String, codProdutor:String,nomeProdutor:String,
-                enderecoProdutor:String, cidade:String, imei:String, latitude:String, longitude:String, dataHora:String, obs:String) {
+                enderecoProdutor:String, cidade:String, imei:String, latitude:String, longitude:String, dataHora:String, obs:String, salvou:String) {
         this.id = id
         this.rota = rota
         this.dataColeta = dataColeta
@@ -41,6 +42,7 @@ class ObjetosPojo {
         this.longitude = longitude
         this.obs  = obs
         this.datahora  = datahora
+        this.salvou  = salvou
     }
 
 

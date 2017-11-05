@@ -36,12 +36,13 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     private static final String LONGITUDE        = "_longitude";
     private static final String OBS              = "_obs";
     private static final String DATAHORA         = "_dataHora";
+    private static final String SALVOU           = "_salvou";
 
 
     //criando a tabela que vai conter os dados em geral
     String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY," + DATACOLETA + " TEXT," + ROTA + " TEXT," + SUBROTA + " TEXT," + COD_PRODUTOR + " TEXT," + NOME_PRODUTOR + " TEXT,"
             + ENDERECO_PRODUTOR + " TEXT," + CIDADE + " TEXT," + IMEI + " INT," + LATITUDE + " REAL," + LONGITUDE + " REAL,"
-            + OBS + " CHAR(150)," + DATAHORA + " TEXT )";
+            + OBS + " CHAR(150)," + DATAHORA + " TEXT" + SALVOU+ "TEXT  )";
 
     String DROP_TABLE  = "DROP TABLE IF EXISTS " + TABLE_NAME;
 

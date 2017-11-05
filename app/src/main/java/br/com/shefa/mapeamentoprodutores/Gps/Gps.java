@@ -66,6 +66,8 @@ public class Gps {
             if (location!= null)
             {
                 atualizar(location);
+            }else{
+                Toast.makeText(context,"ESTA SEM SINAL GPS,VÁ PARA UM LOCAL ABERTO" , Toast.LENGTH_LONG).show();
             }
 
         }catch(SecurityException ex){
