@@ -14,19 +14,25 @@ import kotlinx.android.synthetic.main.activity_main.*
 import br.com.shefa.mapeamentoprodutores.Permissoes.PermissionUtils
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
+import br.com.shefa.mapeamentoprodutores.Gps.Gps
 
 
 class MainActivity : AppCompatActivity() {
     var conexao:Boolean = false
     var numeroImei:String = ""
     var telephonyManager: TelephonyManager? = null
+    var latitude:String =""
+    var longitude:String= ""
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val banco = DB_Interno(this)//chama o banco
+        val gps   = Gps(this)
         conexao = TestarConexao().verificaConexao(this)
+
 
         // Solicita as permissÃµes
         val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
@@ -38,6 +44,7 @@ class MainActivity : AppCompatActivity() {
                 banco.deletar()//deleta todos os registros
                 numeroImei = imei()
                 importaLinhas(numeroImei)
+                ativaGps(gps)
 
                 imei.setText(numeroImei)//textview
 
@@ -82,8 +89,8 @@ class MainActivity : AppCompatActivity() {
     //funçao importar as linhas
     private fun importaLinhas(imei: String) {
 
-    }
 
+    }
 
 
     //pegar  IMEI
@@ -93,6 +100,15 @@ class MainActivity : AppCompatActivity() {
         val deviceId = telephonyManager!!.getDeviceId()
         return  deviceId
     }
+
+    //ativa o gps
+    fun ativaGps(gps2:Gps)
+     {
+         latitude = gps2.posicaolatitude()
+         longitude = gps2.posicaolongitude()
+         texto_latitude.setText(latitude)
+
+     }
 
 
 
