@@ -40,14 +40,13 @@ class MainActivity : AppCompatActivity() {
     var latitude:String =""
     var longitude:String= ""
     var progress: ProgressDialog? = null
-
-
+    var banco: DB_Interno? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val banco = DB_Interno(this)//chama o banco
+        banco = DB_Interno(this)//chama o banco
         val gps   = Gps(this) //inicia a classe do gps
         conexao = TestarConexao().verificaConexao(this)
         texto_latitude.setText("latitude aqui")
@@ -60,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         //click botao baixar linhas
         btn_baixar_linhas.setOnClickListener{
             if (conexao) {
-                banco.deletar()//deleta todos os registros
+                banco!!.deletar()//deleta todos os registros
                 numeroImei = imei()
                 importaLinhas(numeroImei)
                 obtemPosiçoes(gps)
@@ -109,19 +108,20 @@ class MainActivity : AppCompatActivity() {
     private fun importaLinhas(imei: String) {
 
         progress = ProgressDialog(this);
-        progress!!.setMessage("Baixando as linhas");
+        progress!!.setMessage("Baixando as linhas por favor aguarde");
         progress!!.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress!!.show();//inicio progress
         requestQueue = Volley.newRequestQueue(this)//inicio volley
 
         val url = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoEnvio/$imei/$imei.txt"
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url,
                 Response.Listener { response ->
                     try {
+
                         coletaArrayList = ArrayList<ObjetosPojo>()
                         val jsonArray = response.getJSONArray("rotas")
-
                         for (i in 0 until jsonArray.length()) {
-                            progress!!.show();//inicio
+
                             val rotas = jsonArray.getJSONObject(i)
                             val idJson = rotas.getString("sid")
                             val idt = rotas.getString("id")
@@ -145,10 +145,10 @@ class MainActivity : AppCompatActivity() {
                             var origemLatJosn = rotas.getString("origemlat")
                             var origemLongJson = rotas.getString("origemlog")
                             val datahoraJson = rotas.getString("datahora")
-                            val salvou = "0"
+
 
                             val coleta = ObjetosPojo()
-                            coleta.id = idt.toInt()
+                           // coleta.id = idt.toInt()
                             coleta.dataColeta = dataColetaJson
                             coleta.rota = rotaJson
                             coleta.subRota = subRotaJson
@@ -161,11 +161,11 @@ class MainActivity : AppCompatActivity() {
                             coleta.longitude = longitudeJson
                             coleta.obs       = obsJson
                             coleta.datahora = datahoraJson
-                            coleta.salvou   = salvou
+                            coleta.salvou   = "0"
 
                             //aqui vai salvar no banco
 
-
+                            banco!!.addColeta(coleta)
 
                         }//fim do for
                         progress!!.dismiss();//encerra progress
