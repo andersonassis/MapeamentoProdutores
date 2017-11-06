@@ -63,18 +63,16 @@ class MainActivity : AppCompatActivity() {
                 banco!!.deletar()//deleta todos os registros
                 numeroImei = imei()
                 importaLinhas(numeroImei)
-                obtemPosiçoes(gps)
 
                 imei.setText(numeroImei)//textview
-
             }else{
                 ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
             }
         }//fim botao baixar linhas
 
-        //click botao exibir linhas
+        //click botao exibir linhas vai para a tela listar produtores
         btn_exibir_linhas.setOnClickListener{
-            ToastManager.show(this@MainActivity, "click botao exibir", ToastManager.INFORMATION)
+            //ToastManager.show(this@MainActivity, "click botao exibir", ToastManager.INFORMATION)
             val intent = Intent(this@MainActivity, ListarProdutores::class.java)
             startActivity(intent)
 
@@ -83,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
     }//fim do oncreate
 
-    //subscrve o metodo para as permissoes
+    //subescreve o metodo para as permissoes
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -190,14 +188,6 @@ class MainActivity : AppCompatActivity() {
         val deviceId = telephonyManager!!.getDeviceId()
         return  deviceId
     }
-    //ativa o gps
-    fun obtemPosiçoes(gps2:Gps)
-     {
-         latitude = gps2.posicaolatitude()
-         longitude = gps2.posicaolongitude()
-         texto_latitude.setText(latitude)
-     }
-
 
 
 }//fim da classe main

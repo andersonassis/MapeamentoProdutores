@@ -1,16 +1,20 @@
 package br.com.shefa.mapeamentoprodutores
 
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
+import android.database.sqlite.SQLiteCursor
 import android.database.sqlite.SQLiteDatabase
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.widget.SimpleCursorAdapter
 import android.view.View
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_listar_produtores.*
 import java.util.ArrayList
 import android.widget.AdapterView
 import android.widget.Toast
+import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 
 
 class ListarProdutores : AppCompatActivity() {
@@ -18,6 +22,8 @@ class ListarProdutores : AppCompatActivity() {
     internal lateinit var cursorSpinner: Cursor
     internal lateinit var cursor: Cursor
     var label3: String? = null
+    var ad: SimpleCursorAdapter? = null
+    internal var posicao: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,9 +88,50 @@ class ListarProdutores : AppCompatActivity() {
 
     //função para criar a lsiatagem no listview
     fun criarListagem() {
+        val from = arrayOf("_id","_subRota", "_nomeProdutor", "_enderecoProdutor", "_salvou")
+        val to = intArrayOf(R.id.txtId, R.id.txtsuRota, R.id.txtNomeProdutor, R.id.txtendereco, R.id.star)
+        ad = SimpleCursorAdapter(applicationContext, R.layout.itens_produtores, cursor, from, to, 0);
+        try {
+            ad!!.setViewBinder(CustomViewBinder())//chamando este adaptador para acrescentar o check caso o produtor ja foi salvo
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
+        //habilita o click no item da lista
+        listView.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+            val sqlCursor = ad!!.getItem(position) as SQLiteCursor
+            val nomeProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_nomeProdutor"))
+            val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
+            ToastManager.show(applicationContext, "selecionou: " + nomeProdutor, ToastManager.INFORMATION)
 
+            //chama a tela para inserir os dados
+            val altera = Intent(applicationContext, AlteraDados::class.java)
+            altera.putExtra("id_Produtor", idProdutor)
+            startActivity(altera)
+            finish()
+        })
+        listView.setAdapter(ad)//chama o adaptador que monta a lista
     }//fim criarListagem
+
+    // coloca o check na lista se o produtor foi salvo  alteração **** 23/01/2017
+    inner class CustomViewBinder : android.widget.SimpleCursorAdapter.ViewBinder, SimpleCursorAdapter.ViewBinder {
+        override fun setViewValue(view: View, cursor: Cursor, columnIndex: Int): Boolean {
+            if (columnIndex == cursor.getColumnIndex("_salvou")) {  // obs: o campo  _latitude serve para verifica se o produtor foi preenchido e salvo
+                posicao = cursor.position
+                val sqlCursor = ad!!.getItem(posicao) as SQLiteCursor
+                val gravou = sqlCursor.getString(sqlCursor.getColumnIndex("_salvou")) // obs: o campo  _latitude serve para verifica se o produtor foi preenchido e salvo
+                if (gravou != "1") {
+                    view.visibility = View.GONE//  esconde o check
+                } else {
+                    view.visibility = View.VISIBLE// MOSTRA o check
+                }
+                return true
+            }
+            return false
+        }
+    }//fim CustomViewBinder
+
+
 
 
 }//fim da classe
