@@ -2,5 +2,8 @@
     <string name="app_name">Mapeamento Produtores</string>
     <string name="btn_baixar_linhas">BAIXAR LINHAS</string>
     <string name="btn_exibir_linhas">EXIBIR LINHAS</string>
+    <string name="text1">Lista dos Produtores</string>
+    <string name="text2">Selecione a linha do dia </string>
+
 
 </resources>

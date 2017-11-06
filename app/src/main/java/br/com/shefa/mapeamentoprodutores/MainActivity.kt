@@ -14,6 +14,7 @@ import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_main.*
 import br.com.shefa.mapeamentoprodutores.Permissoes.PermissionUtils
 import android.content.DialogInterface
+import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.ProgressBar
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         texto_latitude.setText("latitude aqui")
 
 
-        // Solicita as permissÃµes
+        // Solicita as permissoes
         val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
         PermissionUtils.validate(this, 0, *permissoes)
 
@@ -74,6 +75,9 @@ class MainActivity : AppCompatActivity() {
         //click botao exibir linhas
         btn_exibir_linhas.setOnClickListener{
             ToastManager.show(this@MainActivity, "click botao exibir", ToastManager.INFORMATION)
+            val intent = Intent(this@MainActivity, ListarProdutores::class.java)
+            startActivity(intent)
+
         }//fim botao exibir linhas
 
 
@@ -106,22 +110,18 @@ class MainActivity : AppCompatActivity() {
 
     //funçao importar as linhas
     private fun importaLinhas(imei: String) {
-
         progress = ProgressDialog(this);
         progress!!.setMessage("Baixando as linhas por favor aguarde");
         progress!!.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress!!.show();//inicio progress
         requestQueue = Volley.newRequestQueue(this)//inicio volley
-
         val url = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoEnvio/$imei/$imei.txt"
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url,
                 Response.Listener { response ->
                     try {
-
                         coletaArrayList = ArrayList<ObjetosPojo>()
                         val jsonArray = response.getJSONArray("rotas")
                         for (i in 0 until jsonArray.length()) {
-
                             val rotas = jsonArray.getJSONObject(i)
                             val idJson = rotas.getString("sid")
                             val idt = rotas.getString("id")
@@ -146,10 +146,9 @@ class MainActivity : AppCompatActivity() {
                             var origemLongJson = rotas.getString("origemlog")
                             val datahoraJson = rotas.getString("datahora")
 
-
                             val coleta = ObjetosPojo()
                            // coleta.id = idt.toInt()
-                            coleta.dataColeta = dataColetaJson
+                            coleta.dataColeta =  ""         //dataColetaJson
                             coleta.rota = rotaJson
                             coleta.subRota = subRotaJson
                             coleta.codProdutor = codProdutorJson
@@ -164,8 +163,7 @@ class MainActivity : AppCompatActivity() {
                             coleta.salvou   = "0"
 
                             //aqui vai salvar no banco
-
-                            banco!!.addColeta(coleta)
+                             banco!!.addColeta(coleta)
 
                         }//fim do for
                         progress!!.dismiss();//encerra progress
@@ -182,8 +180,6 @@ class MainActivity : AppCompatActivity() {
                 }
         ) //fim do volley
            requestQueue.add(jsonObjectRequest)
-
-
     }// fim funçao importar as linhas
 
 
@@ -194,7 +190,6 @@ class MainActivity : AppCompatActivity() {
         val deviceId = telephonyManager!!.getDeviceId()
         return  deviceId
     }
-
     //ativa o gps
     fun obtemPosiçoes(gps2:Gps)
      {
@@ -202,7 +197,6 @@ class MainActivity : AppCompatActivity() {
          longitude = gps2.posicaolongitude()
          texto_latitude.setText(latitude)
      }
-
 
 
 

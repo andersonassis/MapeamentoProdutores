@@ -52,7 +52,6 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }
 
 
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
@@ -99,7 +98,6 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     public ArrayList<ObjetosPojo> getALLColeta() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<ObjetosPojo> objetos = null;
-
         try {
             objetos = new ArrayList<ObjetosPojo>();
             String QUERY = "SELECT * FROM " + TABLE_NAME;
@@ -132,7 +130,6 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }//FIM ArrayList<ObjetosPojo> getALLColeta()
 
 
-
     //funcao deletar
     public String deletar(){
         try {
@@ -145,6 +142,9 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
         }
         return "";
     }
+
+
+
 
 
 
