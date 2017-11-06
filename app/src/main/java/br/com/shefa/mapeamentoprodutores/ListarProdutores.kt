@@ -11,8 +11,6 @@ import kotlinx.android.synthetic.main.activity_listar_produtores.*
 import java.util.ArrayList
 import android.widget.AdapterView
 import android.widget.Toast
-import br.com.shefa.mapeamentoprodutores.R.id.spinner
-
 
 
 class ListarProdutores : AppCompatActivity() {
