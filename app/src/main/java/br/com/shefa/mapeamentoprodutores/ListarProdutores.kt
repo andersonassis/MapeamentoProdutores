@@ -47,6 +47,9 @@ class ListarProdutores : AppCompatActivity() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 label3 = parent.getItemAtPosition(position).toString()//valor clicado
+
+                //aqui tentar fazer a escolha da linha
+
                 buscarProdutores()
                 criarListagem()
             }
