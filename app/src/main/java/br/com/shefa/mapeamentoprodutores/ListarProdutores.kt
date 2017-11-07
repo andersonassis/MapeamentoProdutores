@@ -60,7 +60,6 @@ class ListarProdutores : AppCompatActivity() {
         val labels = ArrayList<String>()//para guardar as linhas em um array
         val num = ""
         db = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
-       // cursorSpinner = db!!.rawQuery("SELECT _subRota FROM  tabela_mapeamento  GROUP BY  _subRota  ",null )
         cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM tabela_mapeamento     GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
         if (cursorSpinner.moveToFirst()) {
             do {

@@ -62,10 +62,18 @@ class MainActivity : AppCompatActivity() {
                 if (conexao) {
                     numeroImei = imei()
                     if (contando_registros<=0) {
-                        //banco!!.deletar()//deleta todos os registros
                         importaLinhas(numeroImei)
                     }else{
-                        ToastManager.show(this@MainActivity, "ATENÇÃO!! LINHAS JA IMPORTADAS", ToastManager.INFORMATION)
+                        val alert = AlertDialog.Builder(this)
+                        alert.setTitle("ATENÇÃO!! LINHAS JA IMPORTADAS")
+                        alert.setMessage("Deseja atualizar as LINHAS ?")
+                        alert.setPositiveButton("ATUALIZAR", DialogInterface.OnClickListener { dialog, whichButton ->
+                            banco!!.deletar()//deleta todos os registros
+                            importaLinhas(numeroImei)
+                        })
+                        alert.setNegativeButton("CANCELAR") { dialog, which ->  }
+                        alert.show()
+
                     }//fim do else contando registros
                 } else {
                     ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)

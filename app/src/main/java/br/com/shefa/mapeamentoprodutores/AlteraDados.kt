@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import br.com.shefa.mapeamentoprodutores.BD_Interno.DB_Interno
 import br.com.shefa.mapeamentoprodutores.Gps.Gps
+import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_altera_dados.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,7 +37,7 @@ class AlteraDados : AppCompatActivity() {
         val data_sistema2 = date.format(data_atual)
         datasistema = data_sistema2
 
-        //botao captrar posicao
+        //botao capturar posicao
         btn_capturaposicao.setOnClickListener{
             val gps  = Gps(this) //inicia a classe do gps
             obtemPosiçoes(gps)
@@ -79,18 +80,18 @@ class AlteraDados : AppCompatActivity() {
            ctv.put("_obs",obs)
            val res = db2.update("tabela_mapeamento", ctv, "_id=?", arrayOf(id))
            db2.close()
-           Toast.makeText(this@AlteraDados,"SALVO COM SUCESSO", Toast.LENGTH_LONG).show()
+           ToastManager.show(this@AlteraDados, "SALVO COM SUCESSO", ToastManager.INFORMATION)
            latprodutor.setText("")
            longiprodutor.setText("")
 
        } catch (e: Exception){
            e.printStackTrace()
-           Toast.makeText(this@AlteraDados,"ERRO AO SALVAR", Toast.LENGTH_LONG).show()
-
+           ToastManager.show(this@AlteraDados, "ERRO AO SALVAR", ToastManager.ERROR)
        }
 
     }//fim da função salvar
 
+    //função para fazer um select no banco para mostrar na tela o produtor
     fun buscarDados(id2:String)
     {
         val db3 = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)//abrindo conexão com banco

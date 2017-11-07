@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradiente_button"
     tools:context="br.com.shefa.mapeamentoprodutores.AlteraDados">
 
 
@@ -14,6 +15,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/txtlati"
         android:textAlignment="center"
+        android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,6 +27,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/text_latprodutor"
@@ -36,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/txtlongi"
+        android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/latprodutor" />
@@ -47,6 +51,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
+        android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -54,11 +59,12 @@
 
     <Button
         android:id="@+id/btn_capturaposicao"
-        android:layout_width="wrap_content"
+        android:layout_width="199dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
+        android:background="@drawable/gradiente_button"
         android:text="@string/btncaptura"
         app:layout_constraintEnd_toStartOf="@+id/btn_salvar"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,11 +72,12 @@
 
     <Button
         android:id="@+id/btn_salvar"
-        android:layout_width="0dp"
+        android:layout_width="199dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
+        android:background="@drawable/gradiente_button"
         android:text="@string/btnsalvar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_capturaposicao"
@@ -84,7 +91,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:ems="10"
-        android:hint="Observações"
+        android:hint="Observações(opcional)"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
