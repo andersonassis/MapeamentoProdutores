@@ -82,8 +82,8 @@ public class Gps {
     {
         latPoint = location.getLatitude();
         lngPoint = location.getLongitude();
-        Toast.makeText(context,"latiutude :"+latPoint , Toast.LENGTH_LONG).show();
-        Toast.makeText(context,"longitude :"+lngPoint , Toast.LENGTH_LONG).show();
+        //Toast.makeText(context,"latiutude :"+latPoint , Toast.LENGTH_LONG).show();
+       // Toast.makeText(context,"longitude :"+lngPoint , Toast.LENGTH_LONG).show();
     }
 
 

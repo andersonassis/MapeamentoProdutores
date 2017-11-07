@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
         banco = DB_Interno(this)//chama o banco
         val gps   = Gps(this) //inicia a classe do gps
         conexao = TestarConexao().verificaConexao(this)
-        texto_latitude.setText("latitude aqui")
         contando_registros = banco!!.contandoregistros()
 
         // Solicita as permissoes
@@ -59,11 +58,9 @@ class MainActivity : AppCompatActivity() {
         PermissionUtils.validate(this, 0, *permissoes)
 
         //click botao baixar linhas
-
             btn_baixar_linhas.setOnClickListener {
                 if (conexao) {
                     numeroImei = imei()
-
                     if (contando_registros<=0) {
                         //banco!!.deletar()//deleta todos os registros
                         importaLinhas(numeroImei)

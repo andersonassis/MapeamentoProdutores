@@ -61,7 +61,7 @@ class ListarProdutores : AppCompatActivity() {
         val num = ""
         db = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
        // cursorSpinner = db!!.rawQuery("SELECT _subRota FROM  tabela_mapeamento  GROUP BY  _subRota  ",null )
-        cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM tabela_mapeamento   WHERE  _salvou  = '" + num + "'  GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
+        cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM tabela_mapeamento     GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
         if (cursorSpinner.moveToFirst()) {
             do {
                 try {
