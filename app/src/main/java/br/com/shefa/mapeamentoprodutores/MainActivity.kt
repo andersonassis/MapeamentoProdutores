@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                             val datahoraJson = rotas.getString("datahora")
 
                             val coleta = ObjetosPojo()
-                           // coleta.id = idt.toInt()
+                            coleta.id = idt.toInt()
                             coleta.dataColeta =  ""         //dataColetaJson
                             coleta.rota = rotaJson
                             coleta.subRota = subRotaJson
@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                             coleta.longitude = longitudeJson
                             coleta.obs       = obsJson
                             coleta.datahora = datahoraJson
-                            coleta.salvou   = "0"
+                            coleta.salvou   = ""
 
                             //aqui vai salvar no banco
                              banco!!.addColeta(coleta)
@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity() {
                 Response.ErrorListener {
                     Log.e("Falha", "ERROR")
                     ToastManager.show(this@MainActivity, "Falha na conexão ou arquivo não existe,por favor tentar Novamente", ToastManager.ERROR)
+                    progress!!.dismiss();//encerra progress
                 }
         ) //fim do volley
            requestQueue.add(jsonObjectRequest)

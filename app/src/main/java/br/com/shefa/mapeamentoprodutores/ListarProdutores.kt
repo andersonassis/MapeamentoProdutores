@@ -58,8 +58,10 @@ class ListarProdutores : AppCompatActivity() {
     }//fim do metodo ListagemSpinner
     private fun subRotaLinhas(): Any {
         val labels = ArrayList<String>()//para guardar as linhas em um array
+        val num = ""
         db = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
-        cursorSpinner = db!!.rawQuery("SELECT _subRota FROM  tabela_mapeamento  GROUP BY  _subRota  ",null )
+       // cursorSpinner = db!!.rawQuery("SELECT _subRota FROM  tabela_mapeamento  GROUP BY  _subRota  ",null )
+        cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM tabela_mapeamento   WHERE  _salvou  = '" + num + "'  GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
         if (cursorSpinner.moveToFirst()) {
             do {
                 try {
@@ -90,8 +92,10 @@ class ListarProdutores : AppCompatActivity() {
     fun criarListagem() {
         val from = arrayOf("_id","_subRota", "_nomeProdutor", "_enderecoProdutor", "_salvou")
         val to = intArrayOf(R.id.txtId, R.id.txtsuRota, R.id.txtNomeProdutor, R.id.txtendereco, R.id.star)
-        ad = SimpleCursorAdapter(applicationContext, R.layout.itens_produtores, cursor, from, to, 0);
+
+
         try {
+            ad = SimpleCursorAdapter(applicationContext, R.layout.itens_produtores, cursor, from, to, 0);
             ad!!.setViewBinder(CustomViewBinder())//chamando este adaptador para acrescentar o check caso o produtor ja foi salvo
         } catch (e: Exception) {
             e.printStackTrace()

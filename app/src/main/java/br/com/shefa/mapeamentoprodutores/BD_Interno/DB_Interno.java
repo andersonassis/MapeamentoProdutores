@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 import br.com.shefa.mapeamentoprodutores.Objetos.ObjetosPojo;
+import br.com.shefa.mapeamentoprodutores.Toast.ToastManager;
 import br.com.shefa.mapeamentoprodutores.interfaces.DadosInterface;
 
 /**
@@ -42,7 +43,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     //criando a tabela que vai conter os dados em geral
     String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY," + DATACOLETA + " TEXT," + ROTA + " TEXT," + SUBROTA + " TEXT," + COD_PRODUTOR + " TEXT," + NOME_PRODUTOR + " TEXT,"
             + ENDERECO_PRODUTOR + " TEXT," + CIDADE + " TEXT," + IMEI + " INT," + LATITUDE + " REAL," + LONGITUDE + " REAL,"
-            + OBS + " CHAR(150)," + DATAHORA + " TEXT" + SALVOU+ "TEXT  )";
+            + OBS + " CHAR(150)," + DATAHORA + " TEXT," + SALVOU+ " TEXT  )";
 
     String DROP_TABLE  = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
@@ -56,6 +57,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
         Log.e("criar",   "banco criado com sucesso");
+
     }
 
     @Override
@@ -84,6 +86,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             values.put(LONGITUDE, objetos.getLongitude());
             values.put(OBS, objetos.getObs());
             values.put(DATAHORA, objetos.getDatahora());
+            values.put(SALVOU,objetos.getSalvou());
             db.insert(TABLE_NAME, null, values);
             db.close();
         }catch (Exception e){
@@ -118,6 +121,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
                     coleta.setLongitude(cursor.getString(10));
                     coleta.setObs(cursor.getString(11));
                     coleta.setDatahora(cursor.getString(12));
+                    coleta.setSalvou(cursor.getString(13));
                     objetos.add(coleta);
                 }
             }
