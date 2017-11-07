@@ -32,8 +32,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ListarProdutores" />
-        <activity android:name=".AlteraDados"></activity>
+        <activity android:name=".ListarProdutores"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".AlteraDados"
+                  android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

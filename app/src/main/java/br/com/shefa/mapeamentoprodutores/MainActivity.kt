@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     var longitude:String= ""
     var progress: ProgressDialog? = null
     var banco: DB_Interno? = null
+    var contando_registros:Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,28 +52,34 @@ class MainActivity : AppCompatActivity() {
         val gps   = Gps(this) //inicia a classe do gps
         conexao = TestarConexao().verificaConexao(this)
         texto_latitude.setText("latitude aqui")
-
+        contando_registros = banco!!.contandoregistros()
 
         // Solicita as permissoes
         val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
         PermissionUtils.validate(this, 0, *permissoes)
 
         //click botao baixar linhas
-        btn_baixar_linhas.setOnClickListener{
-            if (conexao) {
-                banco!!.deletar()//deleta todos os registros
-                numeroImei = imei()
-                importaLinhas(numeroImei)
 
-                imei.setText(numeroImei)//textview
-            }else{
-                ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
-            }
-        }//fim botao baixar linhas
+            btn_baixar_linhas.setOnClickListener {
+                if (conexao) {
+                    numeroImei = imei()
+
+                    if (contando_registros<=0) {
+                        //banco!!.deletar()//deleta todos os registros
+                        importaLinhas(numeroImei)
+                    }else{
+                        ToastManager.show(this@MainActivity, "ATENÇÃO!! LINHAS JA IMPORTADAS", ToastManager.INFORMATION)
+                    }//fim do else contando registros
+                } else {
+                    ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
+                }
+            }//fim botao baixar linhas
+
+
+
 
         //click botao exibir linhas vai para a tela listar produtores
         btn_exibir_linhas.setOnClickListener{
-            //ToastManager.show(this@MainActivity, "click botao exibir", ToastManager.INFORMATION)
             val intent = Intent(this@MainActivity, ListarProdutores::class.java)
             startActivity(intent)
 
@@ -145,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                             val datahoraJson = rotas.getString("datahora")
 
                             val coleta = ObjetosPojo()
-                            coleta.id = idt.toInt()
+                            coleta.id = idJson.toInt()
                             coleta.dataColeta =  ""         //dataColetaJson
                             coleta.rota = rotaJson
                             coleta.subRota = subRotaJson
@@ -173,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 },
                 Response.ErrorListener {
-                    Log.e("Falha", "ERROR")
+                    Log.e("Falha", "ERRO")
                     ToastManager.show(this@MainActivity, "Falha na conexão ou arquivo não existe,por favor tentar Novamente", ToastManager.ERROR)
                     progress!!.dismiss();//encerra progress
                 }

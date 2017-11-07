@@ -4,6 +4,10 @@
     <string name="btn_exibir_linhas">EXIBIR LINHAS</string>
     <string name="text1">Lista dos Produtores</string>
     <string name="text2">Selecione a linha do dia </string>
+    <string name="btncaptura">Capturar Posições</string>
+    <string name="btnsalvar">Salvar</string>
+    <string name="txtlati">LATITUDE: </string>
+    <string name="txtlongi">LONGITUDE: </string>
 
 
 </resources>

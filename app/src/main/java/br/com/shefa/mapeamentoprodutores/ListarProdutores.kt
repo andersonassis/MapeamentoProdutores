@@ -92,8 +92,6 @@ class ListarProdutores : AppCompatActivity() {
     fun criarListagem() {
         val from = arrayOf("_id","_subRota", "_nomeProdutor", "_enderecoProdutor", "_salvou")
         val to = intArrayOf(R.id.txtId, R.id.txtsuRota, R.id.txtNomeProdutor, R.id.txtendereco, R.id.star)
-
-
         try {
             ad = SimpleCursorAdapter(applicationContext, R.layout.itens_produtores, cursor, from, to, 0);
             ad!!.setViewBinder(CustomViewBinder())//chamando este adaptador para acrescentar o check caso o produtor ja foi salvo
@@ -112,18 +110,18 @@ class ListarProdutores : AppCompatActivity() {
             val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)
             startActivity(altera)
-            finish()
+
         })
         listView.setAdapter(ad)//chama o adaptador que monta a lista
     }//fim criarListagem
 
-    // coloca o check na lista se o produtor foi salvo  alteração **** 23/01/2017
+    // coloca o check na lista se o produtor foi salvo
     inner class CustomViewBinder : android.widget.SimpleCursorAdapter.ViewBinder, SimpleCursorAdapter.ViewBinder {
         override fun setViewValue(view: View, cursor: Cursor, columnIndex: Int): Boolean {
-            if (columnIndex == cursor.getColumnIndex("_salvou")) {  // obs: o campo  _latitude serve para verifica se o produtor foi preenchido e salvo
+            if (columnIndex == cursor.getColumnIndex("_salvou")) {  // obs: o campo  _salvou serve para verifica se o produtor foi preenchido e salvo
                 posicao = cursor.position
                 val sqlCursor = ad!!.getItem(posicao) as SQLiteCursor
-                val gravou = sqlCursor.getString(sqlCursor.getColumnIndex("_salvou")) // obs: o campo  _latitude serve para verifica se o produtor foi preenchido e salvo
+                val gravou = sqlCursor.getString(sqlCursor.getColumnIndex("_salvou")) // obs: o campo  _salvo serve para verifica se o produtor foi preenchido e salvo
                 if (gravou != "1") {
                     view.visibility = View.GONE//  esconde o check
                 } else {

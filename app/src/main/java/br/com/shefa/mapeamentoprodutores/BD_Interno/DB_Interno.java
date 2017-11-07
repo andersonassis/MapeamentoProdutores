@@ -148,6 +148,23 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     }
 
 
+    // funçao para contar quantos registros tem no banco
+    public int contandoregistros(){
+             int num = 0;
+             SQLiteDatabase db = this.getReadableDatabase();
+             try {
+                 String QUERY = "SELECT * FROM " + TABLE_NAME;
+                 Cursor cursor = db.rawQuery(QUERY, null);
+                 num = cursor.getCount();
+                 db.close();
+                 return num;
+             } catch (Exception e) {
+                 Log.e("ERRO", e + "");
+             }
+             return 0;
+         }//fim do contandoregistros
+
+
 
 
 
