@@ -2,12 +2,14 @@ package br.com.shefa.mapeamentoprodutores
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.database.sqlite.SQLiteCursor
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import br.com.shefa.mapeamentoprodutores.BD_Interno.DB_Interno
 import br.com.shefa.mapeamentoprodutores.Gps.Gps
+import br.com.shefa.mapeamentoprodutores.Mapas.MapaProdutor
 import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 import kotlinx.android.synthetic.main.activity_altera_dados.*
 import java.text.SimpleDateFormat
@@ -20,6 +22,9 @@ class AlteraDados : AppCompatActivity() {
     var banco: DB_Interno? = null
     var idProdutor:String = ""
     var datasistema:String?=null
+    var nome:String = ""
+    var lati:String  = ""
+    var long:String  = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +52,19 @@ class AlteraDados : AppCompatActivity() {
         btn_salvar.setOnClickListener{
             salvar(idProdutor)
             buscarDados(idProdutor)
+        }
+
+
+        btn_mapa_produtor.setOnClickListener{
+            if(!lati.equals("")) {
+                val altera = Intent(applicationContext, MapaProdutor::class.java)
+                altera.putExtra("nome", nome)
+                altera.putExtra("lat", lati)
+                altera.putExtra("long", long)
+                startActivity(altera)
+            }else{
+                ToastManager.show(this@AlteraDados, "SEM POSIÇÃO GPS !!!, CAPTURE A POSIÇÃO PARA VISUALIZAR O MAPA", ToastManager.INFORMATION)
+            }
         }
 
     }//fim do oncreate
@@ -99,16 +117,13 @@ class AlteraDados : AppCompatActivity() {
         val c = db3.rawQuery(sql, arrayOf<String>(id2)) as SQLiteCursor
         if (c.moveToFirst()) {
 
-            val nome = c.getString(c.getColumnIndex("_nomeProdutor"))
-            val lati = c.getString(c.getColumnIndex("_latitude"))
-            val long = c.getString(c.getColumnIndex("_longitude"))
+            nome = c.getString(c.getColumnIndex("_nomeProdutor"))
+            lati = c.getString(c.getColumnIndex("_latitude"))
+            long = c.getString(c.getColumnIndex("_longitude"))
             val linha = c.getString(c.getColumnIndex("_subRota"))
 
             txt_nome.setText(nome.toString())
-            txtlati1.setText(lati.toString())
-            txtlongi1.setText(long.toString())
             txt_linha.setText(linha.toString())
-
         }
         c.close()
         db3.close()//fecha a conexão com o banco

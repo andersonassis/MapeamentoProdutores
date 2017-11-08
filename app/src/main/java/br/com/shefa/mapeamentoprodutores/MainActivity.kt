@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     var contando_registros:Int = 0
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -87,6 +88,19 @@ class MainActivity : AppCompatActivity() {
         btn_exibir_linhas.setOnClickListener{
             val intent = Intent(this@MainActivity, ListarProdutores::class.java)
             startActivity(intent)
+
+
+            //botao enviar
+            btn_enviar_dados.setOnClickListener{
+
+
+
+            }
+
+
+
+
+
 
         }//fim botao exibir linhas
 

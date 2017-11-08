@@ -106,7 +106,7 @@ class ListarProdutores : AppCompatActivity() {
             val sqlCursor = ad!!.getItem(position) as SQLiteCursor
             val nomeProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_nomeProdutor"))
             val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
-            ToastManager.show(applicationContext, "selecionou: " + nomeProdutor, ToastManager.INFORMATION)
+            //ToastManager.show(applicationContext, "selecionou: " + nomeProdutor, ToastManager.INFORMATION)
 
             //chama a tela para inserir os dados
             val altera = Intent(applicationContext, AlteraDados::class.java)
