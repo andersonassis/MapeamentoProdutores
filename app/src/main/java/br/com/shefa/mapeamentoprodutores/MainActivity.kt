@@ -19,17 +19,18 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.ProgressBar
 import android.widget.Toast
+import br.com.shefa.mapeamentoprodutores.ConverteJson.ConverteJson
 import br.com.shefa.mapeamentoprodutores.Gps.Gps
 import br.com.shefa.mapeamentoprodutores.Objetos.ObjetosPojo
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.Response
-import com.android.volley.VolleyError
+import br.com.shefa.mapeamentoprodutores.SalvaDIR.SalvarDiretorio
+import com.android.volley.*
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,13 +39,11 @@ class MainActivity : AppCompatActivity() {
     var conexao:Boolean = false
     var numeroImei:String = ""
     var telephonyManager: TelephonyManager? = null
-    var latitude:String =""
-    var longitude:String= ""
     var progress: ProgressDialog? = null
     var banco: DB_Interno? = null
     var contando_registros:Int = 0
-
-
+    var jsonEnvia:String = ""
+    var enviaDados:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +53,8 @@ class MainActivity : AppCompatActivity() {
         conexao = TestarConexao().verificaConexao(this)
         contando_registros = banco!!.contandoregistros()
 
-        // Solicita as permissoes
+
+        // Solicita as permissoes gps,imei
         val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
         PermissionUtils.validate(this, 0, *permissoes)
 
@@ -82,35 +82,31 @@ class MainActivity : AppCompatActivity() {
             }//fim botao baixar linhas
 
 
-
-
         //click botao exibir linhas vai para a tela listar produtores
         btn_exibir_linhas.setOnClickListener{
             val intent = Intent(this@MainActivity, ListarProdutores::class.java)
             startActivity(intent)
-
-
-            //botao enviar
-            btn_enviar_dados.setOnClickListener{
-
-
-
-            }
-
-
-
-
-
-
         }//fim botao exibir linhas
 
+        //botao enviar dados
+        btn_enviar_dados.setOnClickListener{
+            enviaDados = banco!!.enviarDados() //verificar quantos registros tem salvo pra ser enviado
+            if (conexao) {
+                 if (enviaDados >0) {
+                     enviarDados(numeroImei)
+                 }else{
+                     ToastManager.show(this@MainActivity, "NÃO EXISTE DADOS A SEREM ENVIADOS", ToastManager.INFORMATION)
+                 }
+            }else{
+                ToastManager.show(this@MainActivity, "SEM CONEXÃO COM INTERNET, VERIFIQUE", ToastManager.INFORMATION)
+            }
+        }//fim do botão enviar dados
 
     }//fim do oncreate
 
     //subescreve o metodo para as permissoes
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
         for (result in grantResults) {
             if (result == PackageManager.PERMISSION_DENIED) {
                 // Alguma permissÃ£o foi negada, agora Ã© com vocÃª :-)
@@ -185,13 +181,10 @@ class MainActivity : AppCompatActivity() {
                             coleta.obs       = obsJson
                             coleta.datahora = datahoraJson
                             coleta.salvou   = ""
-
                             //aqui vai salvar no banco
                              banco!!.addColeta(coleta)
-
                         }//fim do for
                         progress!!.dismiss();//encerra progress
-
                     } catch (e: JSONException) {
                         ToastManager.show(this@MainActivity, "Falha no arquivo,favor entrar em contato com a TI", ToastManager.ERROR)
                         progress!!.dismiss();//encerra progress
@@ -208,13 +201,75 @@ class MainActivity : AppCompatActivity() {
     }// fim funçao importar as linhas
 
 
-    //pegar  IMEI
+
+       //função para enviar os dados
+        fun enviarDados(imei: String) {
+            //DATA E HORA DO SISTEMA
+            val date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+            val data = Date()
+            val cal = Calendar.getInstance()
+            cal.time = data
+            val data_atual = cal.time
+            val data_sistema2 = date.format(data_atual)
+            var datasistema = data_sistema2
+            progress = ProgressDialog(this);
+            progress!!.setMessage("Enviando por favor aguarde...")
+            progress!!.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress!!.show();//inicio progress
+            val coleta = banco!!.getALLColeta()
+            var json = ConverteJson().toJson(coleta)
+            jsonEnvia = json.toString()
+            val grava = SalvarDiretorio()  //cria o arquivo txt e salva na memoria do aparelho
+            grava.SalvarDiretorio(json, datasistema)
+            //inicio do envio
+            requestQueue = Volley.newRequestQueue(this)
+            val url = "http://www.shefa-comercial.com.br:8080/coleta/ArquivoGPS/coleta.php"
+            val postRequest = object : StringRequest(Request.Method.POST, url,
+                    Response.Listener { resposta ->
+                        val site = ""
+                        if (resposta.equals("Arquivo gerado com sucesso")) {
+                            try {
+                                Thread.sleep(3000)
+                                banco!!.deletar()//deleta todos os registros
+                                progress!!.dismiss()
+                                ToastManager.show(this@MainActivity, " ENVIADO COM SUCESSO" + resposta, ToastManager.INFORMATION)
+                            } catch (e: InterruptedException) {
+                                e.printStackTrace()
+                                progress!!.dismiss()
+                            }
+                        } else {
+                            progress!!.dismiss()
+                            ToastManager.show(this@MainActivity, "FALHA NA RESPOSTA DO SERVIDOR: " + resposta, ToastManager.INFORMATION)
+
+                        }
+                    },
+                    Response.ErrorListener { error ->
+                        progress!!.dismiss()
+                        ToastManager.show(this@MainActivity, "ATENÇÃO !!! \n FALHA NO ENVIO,POR FAVOR TENTAR NOVAMENTE ", ToastManager.INFORMATION)
+                        error.printStackTrace()
+                    }
+            ) {
+                override fun getParams(): Map<String, String> {
+                    val params = HashMap<String, String>()
+                    // the POST parameters:
+                    params.put("site", jsonEnvia)
+                    return params
+                }
+            }
+            requestQueue.add(postRequest)
+            banco!!.close()
+
+        }//fim da função  enviar dados
+
+
+
+    //função para pegar  IMEI
     @SuppressLint("MissingPermission")
     fun imei():String{
         telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         val deviceId = telephonyManager!!.getDeviceId()
         return  deviceId
-    }
+    }//fim da função pegar IMEI
 
 
 }//fim da classe main

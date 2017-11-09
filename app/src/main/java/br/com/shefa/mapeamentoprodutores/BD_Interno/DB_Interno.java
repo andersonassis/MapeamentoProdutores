@@ -20,7 +20,7 @@ import br.com.shefa.mapeamentoprodutores.interfaces.DadosInterface;
  */
 
 public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
-    //Campos da tabela principal
+    //Campos da tabela tabela_mapeamento
     private static final int DB_VERSION            = 1;
     private static final String DB_NAME            = "mapeamento.db";
     private static final String TABLE_NAME         = "tabela_mapeamento";
@@ -57,17 +57,14 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
         Log.e("criar",   "banco criado com sucesso");
-
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL(DROP_TABLE);
         onCreate(sqLiteDatabase);
-
     }
 
-    @Override
+    @Override // metodo para salvar no banco
     public void addColeta(@NotNull ObjetosPojo objetos) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -93,17 +90,16 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
             e.printStackTrace();
             Log.e("Problema", e + "Problema ao gravar a tabela");
         }
-
     }// fim addColeta
 
     @NotNull
-    @Override
+    @Override //metdo para consultar o banco em enviar od dados, so vi enviar os dados que foram salvos =1
     public ArrayList<ObjetosPojo> getALLColeta() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<ObjetosPojo> objetos = null;
         try {
             objetos = new ArrayList<ObjetosPojo>();
-            String QUERY = "SELECT * FROM " + TABLE_NAME;
+            String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE _salvou = '1'  ";
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
@@ -138,7 +134,7 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
     public String deletar(){
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            String QUERY = ("DELETE  FROM " + TABLE_NAME );
+            String QUERY = ("DELETE  FROM " + TABLE_NAME);
             db.execSQL(QUERY );
             db.close();
         }catch (Exception e){
@@ -163,6 +159,36 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
              }
              return 0;
          }//fim do contandoregistros
+
+
+     // Deletar as linhas não usadas
+     public void deletarLinhas(String linhas){
+         try {
+             SQLiteDatabase db = this.getWritableDatabase();
+             String QUERY = ("DELETE  FROM " + TABLE_NAME + " WHERE  _subRota <> '" + linhas + "'");
+             db.execSQL(QUERY );
+             db.close();
+         }catch (Exception e){
+             e.printStackTrace();
+         }
+     }
+
+
+    //verificar quantos registros tem salvo pra ser enviado
+     public int enviarDados(){
+         int numero =0;
+         SQLiteDatabase db = this.getReadableDatabase();
+         try {
+             String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE _salvou = '1'  ";
+             Cursor cursor = db.rawQuery(QUERY, null);
+             numero = cursor.getCount();
+             db.close();
+             return numero;
+         } catch (Exception e) {
+             Log.e("ERRO", e + "");
+         }
+         return 0;
+     }
 
 
 

@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_listar_produtores.*
 import java.util.ArrayList
 import android.widget.AdapterView
 import android.widget.Toast
+import br.com.shefa.mapeamentoprodutores.BD_Interno.DB_Interno
 import br.com.shefa.mapeamentoprodutores.Toast.ToastManager
 
 
@@ -24,11 +25,14 @@ class ListarProdutores : AppCompatActivity() {
     var label3: String? = null
     var ad: SimpleCursorAdapter? = null
     internal var posicao: Int = 0
+    var banco: DB_Interno? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listar_produtores)
+         banco = DB_Interno(this)//chama o banco
 
          ListagemSpinner()
 
@@ -47,21 +51,16 @@ class ListarProdutores : AppCompatActivity() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 label3 = parent.getItemAtPosition(position).toString()//valor clicado
-
-                //aqui tentar fazer a escolha da linha
-
                 buscarProdutores()
                 criarListagem()
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }
+              override fun onNothingSelected(parent: AdapterView<*>) {
+               }
+        }//fim do click do spinner
 
     }//fim do metodo ListagemSpinner
     private fun subRotaLinhas(): Any {
         val labels = ArrayList<String>()//para guardar as linhas em um array
-        val num = ""
         db = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
         cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM tabela_mapeamento     GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
         if (cursorSpinner.moveToFirst()) {
@@ -90,7 +89,7 @@ class ListarProdutores : AppCompatActivity() {
      }//fim buscarProdutores
 
 
-    //função para criar a lsiatagem no listview
+    //função para criar a listagem no listview
     fun criarListagem() {
         val from = arrayOf("_id","_subRota", "_nomeProdutor", "_enderecoProdutor", "_salvou")
         val to = intArrayOf(R.id.txtId, R.id.txtsuRota, R.id.txtNomeProdutor, R.id.txtendereco, R.id.star)
@@ -104,10 +103,7 @@ class ListarProdutores : AppCompatActivity() {
         //habilita o click no item da lista
         listView.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             val sqlCursor = ad!!.getItem(position) as SQLiteCursor
-            val nomeProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_nomeProdutor"))
             val idProdutor = sqlCursor.getString(sqlCursor.getColumnIndex("_id"))
-            //ToastManager.show(applicationContext, "selecionou: " + nomeProdutor, ToastManager.INFORMATION)
-
             //chama a tela para inserir os dados
             val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)

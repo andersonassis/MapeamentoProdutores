@@ -1,5 +1,6 @@
 package br.com.shefa.mapeamentoprodutores.Mapas
 
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import br.com.shefa.mapeamentoprodutores.R
@@ -20,7 +21,6 @@ class MapaProdutor : AppCompatActivity(), OnMapReadyCallback {
     var longi:String=""
     var latitude:Double = 0.0
     var longitude:Double = 0.0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,13 +43,14 @@ class MapaProdutor : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
         // Adiciona marcador e move a camera com zoom automatico
         val produtor = LatLng(latitude,longitude)
         mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE)
-        mMap.addMarker(MarkerOptions().position(produtor).title(nomeProdutor + " Latitude: "+latitude + " Longitude: "+longitude ))
+       // mMap.setMyLocationEnabled(true)//coloca um ponto azul no local que o disposito esta
+        mMap.addMarker(MarkerOptions().position(produtor).title(nomeProdutor +": " + " Latitude: "+latitude + " Longitude: "+longitude ))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(produtor))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(produtor,17.0f))
+
 
     }
 }
