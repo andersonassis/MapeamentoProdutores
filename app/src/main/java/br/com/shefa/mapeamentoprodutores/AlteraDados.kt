@@ -6,6 +6,7 @@ import android.content.Intent
 import android.database.sqlite.SQLiteCursor
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import br.com.shefa.mapeamentoprodutores.BD_Interno.DB_Interno
 import br.com.shefa.mapeamentoprodutores.Gps.Gps
@@ -25,12 +26,21 @@ class AlteraDados : AppCompatActivity() {
     var nome:String = ""
     var lati:String  = ""
     var long:String  = ""
+    var linha:String = ""
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_altera_dados)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.title = "Voltar"
+
         banco = DB_Interno(this)//chama o banco
         idProdutor = getIntent().getStringExtra("id_Produtor");
+        linha      = getIntent().getStringExtra("linha");
+
         buscarDados(idProdutor)
 
         //DATA E HORA DO SISTEMA
@@ -54,7 +64,7 @@ class AlteraDados : AppCompatActivity() {
             buscarDados(idProdutor)
         }
 
-
+        //botão visualizar MAPA
         btn_mapa_produtor.setOnClickListener{
             if(!lati.equals("")) {
                 val altera = Intent(applicationContext, MapaProdutor::class.java)
@@ -65,7 +75,7 @@ class AlteraDados : AppCompatActivity() {
             }else{
                 ToastManager.show(this@AlteraDados, "SEM POSIÇÃO GPS !!!, CAPTURE A POSIÇÃO PARA VISUALIZAR O MAPA", ToastManager.INFORMATION)
             }
-        }
+        }//FIM DO BOTÃO VISUALIZAR MAPA
 
     }//fim do oncreate
 
@@ -82,14 +92,12 @@ class AlteraDados : AppCompatActivity() {
     fun salvar(id:String)
     {
         val db2 = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
-
        try {
            val salvou:String = "1"
            val datahora: String? = datasistema
            val latitudeLocal   = latprodutor.getText().toString()
            val longitudeLocal  = longiprodutor.getText().toString()
            val obs             = edit_obs.getText().toString()
-
            val ctv = ContentValues()
            ctv.put("_salvou",salvou)
            ctv.put("_latitude",  latitudeLocal)//insere latitude
@@ -101,7 +109,8 @@ class AlteraDados : AppCompatActivity() {
            ToastManager.show(this@AlteraDados, "SALVO COM SUCESSO", ToastManager.INFORMATION)
            latprodutor.setText("")
            longiprodutor.setText("")
-
+           edit_obs.setText("")
+           banco!!.updateLinhas(linha)// aqui vai escoher apenas a linha faz um update
        } catch (e: Exception){
            e.printStackTrace()
            ToastManager.show(this@AlteraDados, "ERRO AO SALVAR", ToastManager.ERROR)
@@ -116,18 +125,29 @@ class AlteraDados : AppCompatActivity() {
         val sql = "SELECT * FROM  tabela_mapeamento  where _id = ?"//select para pegar o produtor clicado de acordo com o ID
         val c = db3.rawQuery(sql, arrayOf<String>(id2)) as SQLiteCursor
         if (c.moveToFirst()) {
-
             nome = c.getString(c.getColumnIndex("_nomeProdutor"))
             lati = c.getString(c.getColumnIndex("_latitude"))
             long = c.getString(c.getColumnIndex("_longitude"))
             val linha = c.getString(c.getColumnIndex("_subRota"))
-
             txt_nome.setText(nome.toString())
             txt_linha.setText(linha.toString())
         }
         c.close()
         db3.close()//fecha a conexão com o banco
     }//fim da funcao buscar dados
+
+
+
+    //menu voltar
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
 
 

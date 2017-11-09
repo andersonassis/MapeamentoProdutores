@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
             }
         }//fim do botão enviar dados
 
+
     }//fim do oncreate
 
     //subescreve o metodo para as permissoes

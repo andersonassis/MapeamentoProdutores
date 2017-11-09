@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.widget.SimpleCursorAdapter
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_listar_produtores.*
@@ -32,6 +33,8 @@ class ListarProdutores : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listar_produtores)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.title = "Voltar"
          banco = DB_Interno(this)//chama o banco
 
          ListagemSpinner()
@@ -62,7 +65,7 @@ class ListarProdutores : AppCompatActivity() {
     private fun subRotaLinhas(): Any {
         val labels = ArrayList<String>()//para guardar as linhas em um array
         db = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
-        cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM tabela_mapeamento     GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
+        cursorSpinner = db!!.rawQuery("SELECT _subRota  FROM  tabela_mapeamento  WHERE   _salvou  <> '2'    GROUP BY  _subRota  ", null);//SELECT PARA PEGAR
         if (cursorSpinner.moveToFirst()) {
             do {
                 try {
@@ -82,7 +85,7 @@ class ListarProdutores : AppCompatActivity() {
     fun buscarProdutores() {
          try {
              db = openOrCreateDatabase("mapeamento.db", Context.MODE_PRIVATE, null)
-             cursor = db!!.rawQuery("SELECT * FROM  tabela_mapeamento  WHERE   _subRota = '$label3' ORDER BY  _nomeProdutor ", null)//SELECT PARA PEGAR SOMENTE O QUE NÃO FOI ENVIADO e  A LINHA ESCOLHIDA PELO SPINNER
+             cursor = db!!.rawQuery("SELECT * FROM  tabela_mapeamento  WHERE   _subRota = '$label3'  AND  _salvou <> '2'  ORDER BY   _nomeProdutor ", null)//SELECT PARA PEGAR SOMENTE O QUE NÃO FOI ENVIADO e  A LINHA ESCOLHIDA PELO SPINNER
          } catch (e: Exception) {
              Toast.makeText(this@ListarProdutores,"ERROR", Toast.LENGTH_LONG).show()
          }
@@ -107,8 +110,9 @@ class ListarProdutores : AppCompatActivity() {
             //chama a tela para inserir os dados
             val altera = Intent(applicationContext, AlteraDados::class.java)
             altera.putExtra("id_Produtor", idProdutor)
+            altera.putExtra("linha", label3)
             startActivity(altera)
-
+            finish()
         })
         listView.setAdapter(ad)//chama o adaptador que monta a lista
     }//fim criarListagem
@@ -130,6 +134,26 @@ class ListarProdutores : AppCompatActivity() {
             return false
         }
     }//fim CustomViewBinder
+
+
+
+    //menu voltar
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    //metodo para refresh na tela
+    override fun onRestart() {
+        super.onRestart()
+        val i = Intent(this@ListarProdutores, ListarProdutores::class.java)  //your class
+        startActivity(i)
+        finish()
+    }
 
 
 

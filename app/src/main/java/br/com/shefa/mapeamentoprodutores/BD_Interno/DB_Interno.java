@@ -161,19 +161,6 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
          }//fim do contandoregistros
 
 
-     // Deletar as linhas não usadas
-     public void deletarLinhas(String linhas){
-         try {
-             SQLiteDatabase db = this.getWritableDatabase();
-             String QUERY = ("DELETE  FROM " + TABLE_NAME + " WHERE  _subRota <> '" + linhas + "'");
-             db.execSQL(QUERY );
-             db.close();
-         }catch (Exception e){
-             e.printStackTrace();
-         }
-     }
-
-
     //verificar quantos registros tem salvo pra ser enviado
      public int enviarDados(){
          int numero =0;
@@ -189,6 +176,22 @@ public class DB_Interno extends SQLiteOpenHelper implements DadosInterface {
          }
          return 0;
      }
+
+
+     //update na linhas
+       public void updateLinhas(String Linha){
+           SQLiteDatabase db = this.getReadableDatabase();
+           String updtade2 = "UPDATE  tabela_mapeamento  SET   _salvou  = '2'   WHERE    _subRota <> '"+Linha+"'   ";
+           try {
+               SQLiteDatabase db2 = this.getWritableDatabase();
+               String QUERY = (updtade2);
+               db2.execSQL(QUERY );
+               db2.close();
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+       }
+
 
 
 
