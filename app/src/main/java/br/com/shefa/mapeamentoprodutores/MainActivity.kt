@@ -48,10 +48,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar!!.title = "Mapeamento dos produtores"
         banco = DB_Interno(this)//chama o banco
         val gps   = Gps(this) //inicia a classe do gps
         conexao = TestarConexao().verificaConexao(this)
         contando_registros = banco!!.contandoregistros()
+        val alert = AlertDialog.Builder(this)
 
 
         // Solicita as permissoes gps,imei
@@ -65,7 +67,6 @@ class MainActivity : AppCompatActivity() {
                     if (contando_registros<=0) {
                         importaLinhas(numeroImei)
                     }else{
-                        val alert = AlertDialog.Builder(this)
                         alert.setTitle("ATENÇÃO!! LINHAS JA IMPORTADAS")
                         alert.setMessage("Deseja atualizar as LINHAS ?")
                         alert.setPositiveButton("ATUALIZAR", DialogInterface.OnClickListener { dialog, whichButton ->
@@ -88,12 +89,20 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }//fim botao exibir linhas
 
+
         //botao enviar dados
         btn_enviar_dados.setOnClickListener{
             enviaDados = banco!!.enviarDados() //verificar quantos registros tem salvo pra ser enviado
             if (conexao) {
                  if (enviaDados >0) {
-                     enviarDados(numeroImei)
+                     alert.setTitle("ENVIAR OS DADOS")
+                     alert.setMessage("DESEJA ENVIAR AS LINHAS ?")
+                     alert.setPositiveButton("ENVIAR", DialogInterface.OnClickListener { dialog, whichButton ->
+                         enviarDados(numeroImei)
+                     })
+                       alert.setNegativeButton("CANCELAR") { dialog, which ->  }
+                       alert.show()
+
                  }else{
                      ToastManager.show(this@MainActivity, "NÃO EXISTE DADOS A SEREM ENVIADOS", ToastManager.INFORMATION)
                  }
@@ -241,7 +250,6 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             progress!!.dismiss()
                             ToastManager.show(this@MainActivity, "FALHA NA RESPOSTA DO SERVIDOR: " + resposta, ToastManager.INFORMATION)
-
                         }
                     },
                     Response.ErrorListener { error ->

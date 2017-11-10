@@ -112,7 +112,7 @@ class ListarProdutores : AppCompatActivity() {
             altera.putExtra("id_Produtor", idProdutor)
             altera.putExtra("linha", label3)
             startActivity(altera)
-            finish()
+
         })
         listView.setAdapter(ad)//chama o adaptador que monta a lista
     }//fim criarListagem
