@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import br.com.shefa.mapeamentoprodutores.Toast.ToastManager;
+
 /**
  * Created by AndersonLuis on 05/11/2017.
  */
@@ -67,7 +69,7 @@ public class Gps {
             {
                 atualizar(location);
             }else{
-                Toast.makeText(context,"ESTA SEM SINAL GPS,VÁ PARA UM LOCAL ABERTO" , Toast.LENGTH_LONG).show();
+                ToastManager.show(context, "ESTA SEM SINAL GPS,VÁ PARA UM LOCAL ABERTO", ToastManager.INFORMATION);
             }
 
         }catch(SecurityException ex){

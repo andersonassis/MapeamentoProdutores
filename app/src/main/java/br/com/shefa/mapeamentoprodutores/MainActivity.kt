@@ -52,9 +52,7 @@ class MainActivity : AppCompatActivity() {
         banco = DB_Interno(this)//chama o banco
         val gps   = Gps(this) //inicia a classe do gps
         conexao = TestarConexao().verificaConexao(this)
-        contando_registros = banco!!.contandoregistros()
         val alert = AlertDialog.Builder(this)
-
 
         // Solicita as permissoes gps,imei
         val permissoes = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET)
@@ -64,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             btn_baixar_linhas.setOnClickListener {
                 if (conexao) {
                     numeroImei = imei()
+                    contando_registros = banco!!.contandoregistros()
                     if (contando_registros<=0) {
                         importaLinhas(numeroImei)
                     }else{
@@ -196,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                         }//fim do for
                         progress!!.dismiss();//encerra progress
                     } catch (e: JSONException) {
-                        ToastManager.show(this@MainActivity, "Falha no arquivo,favor entrar em contato com a TI", ToastManager.ERROR)
+                       // ToastManager.show(this@MainActivity, "Falha no arquivo,favor entrar em contato com a TI", ToastManager.ERROR)
                         progress!!.dismiss();//encerra progress
                         e.printStackTrace()
                     }
@@ -279,6 +278,10 @@ class MainActivity : AppCompatActivity() {
         val deviceId = telephonyManager!!.getDeviceId()
         return  deviceId
     }//fim da função pegar IMEI
+
+
+
+
 
 
 }//fim da classe main
